@@ -4,9 +4,17 @@
 \name{vcturrrs-package}
 \alias{vcturrrs}
 \alias{vcturrrs-package}
-\title{vcturrrs: What the Package Does (One Line, Title Case)}
+\title{vcturrrs: Combining the Iteration of 'purrr' With the Type Stability of 'vctrs'}
 \description{
 What the package does (one paragraph).
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/DavisVaughan/vcturrrs}
+  \item Report bugs at \url{https://github.com/DavisVaughan/vcturrrs/issues}
+}
+
 }
 \author{
 \strong{Maintainer}: First Last \email{first.last@example.com} (YOUR-ORCID-ID)
