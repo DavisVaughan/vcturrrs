@@ -80,6 +80,7 @@
 #'
 #' @export
 vec_map <- function(.x, .f, ..., .ptype = NULL) {
+  vec_assert(.x)
   out <- map(.x, .f, ...)
   vec_simplify(out, .ptype = .ptype)
 }

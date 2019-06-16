@@ -84,3 +84,60 @@ vec_map_strict(1:2, ~ .x)
 vec_map_strict(1:2, ~ .x, .ptype = integer())
 ```
 
+## Solving issues
+
+```{r}
+library(purrr)
+```
+
+```{r, error=TRUE}
+# https://github.com/tidyverse/purrr/issues/679
+map(NULL, ~ .x)
+
+vec_map(NULL, ~ .x)
+```
+
+```{r}
+# https://github.com/tidyverse/purrr/issues/633
+map_chr(1:2, length)
+
+# I think this one is actually okay because you are explicit about wanting
+# a character back? So if the cast is possible, do it.
+vec_map(1:2, length, .ptype = character())
+```
+
+```{r}
+# https://github.com/tidyverse/purrr/issues/472
+list_of_vecs <- list(
+  a = c(x = 1, y = 1, z = 1, w = 1), 
+  b = c(x = 2, y = 2, z = 2, w = 2), 
+  c = c(x = 3, y = 3, z = 3, w = 3)
+)
+
+map_dfr(list_of_vecs, ~.x)
+
+vec_map_dfr(list_of_vecs, ~ .x)
+```
+
+```{r, error = TRUE}
+# https://github.com/tidyverse/purrr/issues/376
+nested <- list(
+  col1 = list(
+    c("Apple", "Banana"),
+    c("Orange")
+  ),
+  col2 = list(
+    c("Baseball", "Soccer"),
+    c("Football")
+  )
+)
+
+map_dfc(nested, map, sprintf, fmt = "I like %s")
+
+vec_map_dfc(nested, map, sprintf, fmt = "I like %s")
+```
+
+
+
+
+

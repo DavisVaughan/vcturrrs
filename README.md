@@ -50,7 +50,7 @@ vec_map(1:2, ~ if (.x == 1L) 1:2 else 3, .ptype = list())
 # The best thing about `vec_map()` is its flexibility with other
 # non-atomic types, for example, simplifying to a date vector
 vec_map(1:2, ~ Sys.Date() + .x)
-#> [1] "2019-06-16" "2019-06-17"
+#> [1] "2019-06-17" "2019-06-18"
 
 # If a common type cannot be determined, a list is returned
 vec_map(list(1, "x"), ~ .x)
@@ -104,4 +104,76 @@ vec_map_strict(1:2, ~ .x)
 # You have to specify the ptype to get simplification
 vec_map_strict(1:2, ~ .x, .ptype = integer())
 #> [1] 1 2
+```
+
+## Solving issues
+
+``` r
+library(purrr)
+```
+
+``` r
+# https://github.com/tidyverse/purrr/issues/679
+map(NULL, ~ .x)
+#> list()
+
+vec_map(NULL, ~ .x)
+#> `.x` must be a vector, not NULL
+```
+
+``` r
+# https://github.com/tidyverse/purrr/issues/633
+map_chr(1:2, length)
+#> [1] "1" "1"
+
+# I think this one is actually okay because you are explicit about wanting
+# a character back? So if the cast is possible, do it.
+vec_map(1:2, length, .ptype = character())
+#> [1] "1" "1"
+```
+
+``` r
+# https://github.com/tidyverse/purrr/issues/472
+list_of_vecs <- list(
+  a = c(x = 1, y = 1, z = 1, w = 1), 
+  b = c(x = 2, y = 2, z = 2, w = 2), 
+  c = c(x = 3, y = 3, z = 3, w = 3)
+)
+
+map_dfr(list_of_vecs, ~.x)
+#> # A tibble: 4 x 3
+#>       a     b     c
+#>   <dbl> <dbl> <dbl>
+#> 1     1     2     3
+#> 2     1     2     3
+#> 3     1     2     3
+#> 4     1     2     3
+
+vec_map_dfr(list_of_vecs, ~ .x)
+#>   x y z w
+#> 1 1 1 1 1
+#> 2 2 2 2 2
+#> 3 3 3 3 3
+```
+
+``` r
+# https://github.com/tidyverse/purrr/issues/376
+nested <- list(
+  col1 = list(
+    c("Apple", "Banana"),
+    c("Orange")
+  ),
+  col2 = list(
+    c("Baseball", "Soccer"),
+    c("Football")
+  )
+)
+
+map_dfc(nested, map, sprintf, fmt = "I like %s")
+#> Error: Argument 2 must be length 2, not 1
+
+vec_map_dfc(nested, map, sprintf, fmt = "I like %s")
+#>                          col1                           col2
+#> 1 I like Apple, I like Banana I like Baseball, I like Soccer
+#> 2               I like Orange                I like Football
 ```
