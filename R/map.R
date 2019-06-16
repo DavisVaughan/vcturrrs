@@ -97,8 +97,7 @@ vec_map <- function(.x, .f, ..., .ptype = NULL) {
 #' @export
 vec_map_strict <- function(.x, .f, ..., .ptype = list()) {
   vec_assert(.ptype)
-  out <- map(.x, .f, ...)
-  vec_simplify(out, .ptype = .ptype)
+  vec_map(.x, .f, ..., .ptype = .ptype)
 }
 
 vec_simplify <- function(x, .ptype = NULL) {
