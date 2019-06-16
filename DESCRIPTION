@@ -1,5 +1,5 @@
 Package: vcturrrs
-Title: What the Package Does (One Line, Title Case)
+Title: Combining the Iteration of 'purrr' With the Type Stability of 'vctrs'
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "First",
