@@ -1,0 +1,86 @@
+---
+output: github_document
+editor_options: 
+  chunk_output_type: console
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+
+options(rlang_backtrace_on_error = "reminder")
+```
+# vcturrrs
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+An exploration of vctrs + purrr.
+
+## Example
+
+```{r, error = TRUE}
+library(vcturrrs)
+library(vctrs)
+
+# Auto simplified to an integer vector
+vec_map(1:2, ~ .x)
+
+# Prevent simplification with `.ptype = list()`
+vec_map(1:2, ~ .x, .ptype = list())
+
+# If a `.ptype` is specified, and casting to that type
+# is not possible, an error is raised
+try(vec_map(1:2, ~ .x, .ptype = factor()))
+
+# If simplification is possible, all elements must have size 1,
+# otherwise an error is raised
+try(vec_map(1:2, ~ if (.x == 1L) 1:2 else 3))
+
+# But if you use `.ptype = list()`, this is relaxed
+# (However, note that the size of the output is still the
+# same as the size of the input (2), this is the key!)
+vec_map(1:2, ~ if (.x == 1L) 1:2 else 3, .ptype = list())
+
+# The best thing about `vec_map()` is its flexibility with other
+# non-atomic types, for example, simplifying to a date vector
+vec_map(1:2, ~ Sys.Date() + .x)
+
+# If a common type cannot be determined, a list is returned
+vec_map(list(1, "x"), ~ .x)
+
+# Note that just because a common type isn't found, doesn't mean you
+# can't still coerce to a certain type. This is the difference between
+# _coercion_ (automatic type casting) and a _cast_ which is slightly more
+# flexible because you are specifically requesting the output type.
+vec_map(list(1, "x"), ~ .x, .ptype = character())
+
+# Data frames work too
+vec_map(1:2, ~ data.frame(x = .x))
+
+# You can enforce the structure of the data frame output with a ptype.
+# This has the same result as before but coerces the integers to characters
+ptype <- data.frame(x = character(), stringsAsFactors = FALSE)
+vec_map(1:2, ~ data.frame(x = .x), .ptype = ptype)
+
+# Or you can enforce a partial structure with a partial_frame()
+partial_ptype <- partial_frame(y = numeric())
+vec_map(1:2, ~ data.frame(x = .x, y = .x + 1), .ptype = partial_ptype)
+```
+
+There is a strict version of `vec_map()` that does not allow for any "guessing" of the ptype using vctrs rules.
+
+```{r}
+# By default, it works like map()
+vec_map_strict(1:2, ~ .x)
+
+# You have to specify the ptype to get simplification
+vec_map_strict(1:2, ~ .x, .ptype = integer())
+```
+
