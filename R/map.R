@@ -81,24 +81,7 @@
 #' @export
 vec_map <- function(.x, .f, ..., .ptype = NULL) {
   out <- map(.x, .f, ...)
-
-  .ptype <- tryCatch(
-    expr = {
-      vec_type_common(!!!out, .ptype = .ptype)
-    },
-    vctrs_error_incompatible_type = function(e) {
-      list()
-    }
-  )
-
-  if (vec_is(.ptype, ptype = list())) {
-    return(out)
-  }
-
-  # enforce size of 1 if not a list()
-  vec_recycle_common(!!!out, .size = 1L)
-
-  vec_c(!!!out, .ptype = .ptype)
+  vec_simplify(out, .ptype = .ptype)
 }
 
 #' Strictly apply a function to each element of a vector
@@ -114,15 +97,26 @@ vec_map <- function(.x, .f, ..., .ptype = NULL) {
 #' @export
 vec_map_strict <- function(.x, .f, ..., .ptype = list()) {
   vec_assert(.ptype)
-
   out <- map(.x, .f, ...)
+  vec_simplify(out, .ptype = .ptype)
+}
+
+vec_simplify <- function(x, .ptype = NULL) {
+  .ptype <- tryCatch(
+    expr = {
+      vec_type_common(!!!x, .ptype = .ptype)
+    },
+    vctrs_error_incompatible_type = function(e) {
+      list()
+    }
+  )
 
   if (vec_is(.ptype, ptype = list())) {
-    return(out)
+    return(x)
   }
 
   # enforce size of 1 if not a list()
-  vec_recycle_common(!!!out, .size = 1L)
+  vec_recycle_common(!!!x, .size = 1L)
 
-  vec_c(!!!out, .ptype = .ptype)
+  vec_c(!!!x, .ptype = .ptype)
 }
