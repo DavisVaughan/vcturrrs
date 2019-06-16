@@ -18,3 +18,5 @@ RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE)
 Remotes:
     r-lib/vctrs
+URL: https://github.com/DavisVaughan/vcturrrs
+BugReports: https://github.com/DavisVaughan/vcturrrs/issues
